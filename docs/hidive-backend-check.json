@@ -1,0 +1,14 @@
+{
+  "environment": "Restricted Codex execution session",
+  "channelName": "ANIME x HIDIVE",
+  "sourceNumber": 1,
+  "browserError": "MEDIA_ERR_4",
+  "sourceUrl": "https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8",
+  "apiStatus": 503,
+  "response": {
+    "code": "DIRECTORY_UNAVAILABLE",
+    "reasonCode": "EACCES",
+    "message": "Could not validate this source against IPTV-org. Check backend network access and try again."
+  },
+  "interpretation": "Node's outbound connection to the public directory was denied by the execution environment. No upstream TV stream diagnosis was obtained."
+}

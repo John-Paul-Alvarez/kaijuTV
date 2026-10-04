@@ -1,0 +1,15 @@
+.player-overlay.error{display:block;overflow-y:auto;overscroll-behavior:contain;padding:24px 28px;scrollbar-width:thin;scrollbar-color:#526543 #10150f}
+.playback-error-report{max-width:650px;margin:0 auto;text-align:left;color:#a6b39c}
+.playback-error-report>svg{color:var(--acid);display:block;margin:0 auto}
+.playback-error-report>h3{text-align:center;margin:10px 0 8px;font-size:19px}
+.playback-error-report>p{font-size:12px;line-height:1.6;text-align:center}
+.error-facts{margin:16px 0 12px;padding:10px 14px;border:1px solid #3b492f;background:#1b2417;border-radius:8px}
+.error-facts>div{display:grid;grid-template-columns:105px minmax(0,1fr);gap:12px;padding:5px 0;font-size:11px;line-height:1.5}
+.error-facts dt{color:#96ab85}.error-facts dd{margin:0;color:#edf4e6;overflow-wrap:anywhere}
+.error-facts code{font-family:ui-monospace,monospace;font-size:11px;color:var(--acid)}
+.playback-error-report>p.error-next-step{font-size:11px;text-align:left}
+.error-technical{margin-top:13px;border-top:1px solid #33412b;padding-top:12px;font-size:11px}
+.error-technical summary{cursor:pointer;color:#d5e9c4;font-weight:600;padding:3px 0;line-height:1.6}
+.error-technical dl{margin:12px 0;display:grid;gap:12px}.error-technical dt{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:#8da57b;margin-bottom:4px}.error-technical dd{margin:0;font-size:11px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-wrap;color:#d6e1ce}.error-technical code{font-family:ui-monospace,monospace;font-size:10px}.error-technical p{font-size:10px!important;text-align:left;line-height:1.7;color:#91a581}
+.playback-error-report>.primary{display:flex;margin:15px auto 0}
+@media(max-width:560px){.player-overlay.error{padding:18px 15px}.playback-error-report>h3{font-size:16px;line-height:1.3}.playback-error-report>p{font-size:11px;line-height:1.6}.error-facts{padding:8px 10px;margin-top:12px}.error-facts>div{grid-template-columns:74px minmax(0,1fr);font-size:10px;gap:7px}.error-facts code{font-size:10px}.error-technical summary{font-size:11px}.playback-error-report>svg{width:22px;height:22px}}

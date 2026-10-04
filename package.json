@@ -1,0 +1,11 @@
+{
+  "name": "kaijutv",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "test": "npm --prefix backend test && npm --prefix frontend test"
+  }
+}

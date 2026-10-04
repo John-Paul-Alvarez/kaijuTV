@@ -1,0 +1,42 @@
+{
+  "id": "d35f2d42-b389-46f4-9a36-76839faf99d3",
+  "channelName": "ANIME x HIDIVE",
+  "sourceNumber": 1,
+  "browserError": "MEDIA_ERR_4",
+  "sourceUrl": "https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8",
+  "cached": false,
+  "outcome": "reachable",
+  "code": "SAMPLE_REACHABLE",
+  "summary": "The backend retrieved HLS playlists and a media sample. Browser playback and codecs remain unverified.",
+  "checkedAt": "2026-10-02T01:52:03.477Z",
+  "elapsedMs": 4,
+  "encrypted": false,
+  "checks": [
+    {
+      "stage": "entry-playlist",
+      "url": "https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8",
+      "status": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "bytes": 61,
+      "redirects": [],
+      "truncated": false,
+      "corsAllowOrigin": null,
+      "playlistKind": "media",
+      "encrypted": false
+    },
+    {
+      "stage": "segment-sample",
+      "url": "https://jmp2.uk/fixture-segment.ts",
+      "status": 206,
+      "contentType": "video/mp2t",
+      "bytes": 23,
+      "redirects": [],
+      "truncated": false,
+      "corsAllowOrigin": null
+    }
+  ],
+  "limitations": [
+    "Only the first variant and one bounded media sample were checked.",
+    "No decoding or sustained playback was tested. CORS headers alone do not establish browser access."
+  ]
+}

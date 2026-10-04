@@ -1,0 +1,3 @@
+.player-actions { flex-wrap: wrap; justify-content: flex-end; }
+.playback-error-report > button + button { margin-left: 8px; }
+@media (max-width: 900px) { .now-playing { flex-wrap: wrap; } .player-actions { flex-basis: 100%; justify-content: flex-start; } }
