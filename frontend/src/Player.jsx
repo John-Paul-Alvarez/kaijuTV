@@ -157,8 +157,8 @@ export default function Player({ channel, streamIndex, onStatus, onErrorReport, 
       <div className="orbit orbit-one" /><div className="orbit orbit-two" />
       <div className="signal-emblem"><img src="/favicon.svg" alt="" /><span className="signal-dot" /></div>
       <span className="eyebrow">YOUR WORLD. ON AIR.</span>
-      <h2>Small screen.<br /><em>Monster possibilities.</em></h2>
-      <p>Pick a channel. Find your next obsession.</p>
+      <h2>Choose a channel<br /><em>to start watching.</em></h2>
+      <p>Browse the directory and pick your next signal.</p>
       <span className="screen-hint"><Radio size={14} /> Live television from around the planet</span>
       <div className="skyline" aria-hidden="true">{Array.from({ length: 25 }, (_, i) => <i key={i} style={{ height: `${25 + (i * 37 % 85)}px` }} />)}</div>
     </div>}
