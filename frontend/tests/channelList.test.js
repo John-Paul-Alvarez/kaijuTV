@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 // and channel states without adding a test framework or launching a browser.
 const compiler = await createServer({
   root: fileURLToPath(new URL('..', import.meta.url)), configFile: false,
-  server: { middlewareMode: true, hmr: false },
+  server: { middlewareMode: true, hmr: false, ws: false },
   optimizeDeps: { noDiscovery: true, include: [] },
 });
 let ChannelList;

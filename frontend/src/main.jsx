@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUpRight, ChevronRight, Globe2, Heart, Radio, Search, Tv, X, RefreshCw } from 'lucide-react';
+import { ArrowUpRight, ChevronRight, Globe2, Heart, Radio, Tv, RefreshCw } from 'lucide-react';
 import { loadCatalog } from './catalog';
 import Player from './Player';
 import StreamDiagnostics from './StreamDiagnostics';
@@ -8,9 +8,10 @@ import { defaultRelay } from './relayClient';
 import { playbackPresentation } from './playbackPresentation';
 import ChannelList from './ChannelList';
 import { captureBrowserPosition, restoreBrowserPosition } from './browserPosition';
+import ChannelBrowserControls, { DirectoryEmptyState } from './ChannelBrowserControls';
+import { activeDirectoryFilters, directoryFiltersReducer, filterDirectory, initialDirectoryFilters } from './directoryFilters';
 import './styles.css';
 
-const categories = ['all', 'news', 'entertainment', 'movies', 'music', 'sports', 'documentary', 'animation'];
 const label = text => text.charAt(0).toUpperCase() + text.slice(1);
 function readFavorites() { try { const value = JSON.parse(localStorage.getItem('kaiju-favorites') || '[]'); return Array.isArray(value) ? value.filter(item => typeof item === 'string') : []; } catch { return []; } }
 
@@ -23,9 +24,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reload, setReload] = useState(0);
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
-  const [country, setCountry] = useState('all');
+  const [filters, dispatchFilters] = useReducer(directoryFiltersReducer, initialDirectoryFilters);
   const [view, setView] = useState('all');
   const [limit, setLimit] = useState(24);
   const [favorites, setFavorites] = useState(readFavorites);
@@ -59,14 +58,13 @@ function App() {
   }, [reload]);
 
   useEffect(() => { try { localStorage.setItem('kaiju-favorites', JSON.stringify(favorites)); } catch { /* Existing storage behaviour; migration belongs to KTV-06. */ } }, [favorites]);
-  useEffect(() => setLimit(24), [search, category, country, view]);
+  useEffect(() => {
+    setLimit(24);
+    if (browserResultsRef.current) browserResultsRef.current.scrollTop = 0;
+  }, [filters, view]);
   const countries = useMemo(() => [...new Map(channels.map(item => [item.country, item.countryName])).entries()].sort((a, b) => a[1].localeCompare(b[1])), [channels]);
-  const filtered = useMemo(() => channels.filter(item =>
-    (view !== 'favorites' || favorites.includes(item.key)) &&
-    (category === 'all' || item.categories.includes(category)) &&
-    (country === 'all' || item.country === country) &&
-    `${item.name} ${item.countryName}`.toLowerCase().includes(search.trim().toLowerCase())
-  ), [channels, view, favorites, category, country, search]);
+  const filtered = useMemo(() => filterDirectory(channels, filters, { view, favorites }), [channels, filters, view, favorites]);
+  const hasFilters = activeDirectoryFilters(filters, countries).length > 0;
 
   const presentation = playbackPresentation(selected, playback);
 
@@ -86,7 +84,7 @@ function App() {
     setStreamIndex(index); setUseRelay(defaultRelay(selected.streams[index]?.url));
   }
   const toggleFavorite = useCallback(key => { setFavorites(previous => previous.includes(key) ? previous.filter(item => item !== key) : [...previous, key]); }, []);
-  function resetFilters() { setSearch(''); setCategory('all'); setCountry('all'); }
+  function resetFilters() { dispatchFilters({ type: 'reset' }); }
   function openView(next) { setView(next); if (next === 'favorites') resetFilters(); }
 
   return <>
@@ -143,15 +141,11 @@ function App() {
               <div><span className="eyebrow">FIND YOUR FREQUENCY</span><h2 id="directory-title">{view === 'favorites' ? 'Favorites' : 'Channels'}<span className="result-count">{loading ? '…' : filtered.length.toLocaleString()}</span></h2></div>
               <Globe2 size={23} aria-hidden="true" />
             </div>
-            <label className="search"><Search size={18} /><input aria-label="Search channels" placeholder="Search channels or countries…" value={search} onChange={event => setSearch(event.target.value)} />{search && <button aria-label="Clear search" onClick={() => setSearch('')}><X size={16} /></button>}</label>
-            <div className="filter-row">
-              <div className="categories" role="group" aria-label="Channel category">{categories.map(item => <button aria-pressed={category === item} className={category === item ? 'active' : ''} key={item} onClick={() => setCategory(item)}>{item === 'all' ? 'All' : label(item)}</button>)}</div>
-              <label className="country-filter"><Globe2 size={16} /><select aria-label="Filter by country" value={country} onChange={event => setCountry(event.target.value)}><option value="all">All countries</option>{countries.map(([code, name]) => <option key={code} value={code}>{name}</option>)}</select></label>
-            </div>
+            <ChannelBrowserControls filters={filters} countries={countries} dispatch={dispatchFilters} resultCount={filtered.length} favoritesOnly={view === 'favorites'} loading={loading} error={Boolean(error)} />
             <div className="directory-results" ref={browserResultsRef}>
               {loading ? <div className="empty-state" role="status"><RefreshCw className="spin" size={25} /><h3>Finding your channels…</h3><p>Loading the live TV directory.</p></div>
                 : error ? <div className="empty-state" role="alert"><Radio size={26} /><h3>The directory is out of reach.</h3><p>{error}</p><button className="primary" onClick={() => setReload(value => value + 1)}><RefreshCw size={15} /> Retry directory</button></div>
-                : filtered.length === 0 ? <div className="empty-state"><Tv size={27} /><h3>{view === 'favorites' && favorites.length === 0 ? 'Keep your favorites close.' : 'No channels found.'}</h3><p>{view === 'favorites' && favorites.length === 0 ? 'Tap the heart on a channel to save it here.' : 'Try another search, category, or country.'}</p><button className="primary" onClick={() => { resetFilters(); if (view === 'favorites') setView('all'); }}>Browse all channels</button></div>
+                : filtered.length === 0 ? <DirectoryEmptyState favoritesOnly={view === 'favorites'} favoritesCount={favorites.length} hasFilters={hasFilters} onClearFilters={resetFilters} onBrowseAll={() => { resetFilters(); setView('all'); }} />
                 : <>
                   <ChannelList channels={filtered.slice(0, limit)} selectedKey={selected?.key} playback={playback} favorites={favorites} onSelect={choose} onToggleFavorite={toggleFavorite} />
                   <div className="browse-more"><p>Showing {Math.min(limit, filtered.length)} of {filtered.length.toLocaleString()} feeds</p>{limit < filtered.length && <button onClick={() => setLimit(value => value + 24)}>Load more channels <ChevronRight size={16} /></button>}</div>
